@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    color:black;
+}
+
+.map-container {
+  position: absolute;
+  color: black;
+  /* position:relative; */
+  top: 6vh; /* Adjust this value as needed to avoid overlapping with other elements */
+  bottom: 0vh;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 50vh); /* Adjust the height to fill the remaining viewport */
+  z-index: -1; 
+  margin-top: 0vh;
+ 
+}
+
+
+

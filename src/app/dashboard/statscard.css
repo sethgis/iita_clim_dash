@@ -1,0 +1,43 @@
+
+.statscard {
+    background-color: rgb(139, 144, 145);
+    position: absolute;
+    right: 0%; /* Adjust as needed */
+    top: 13%; /* Adjust as needed */
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    width: 28%; /* Adjust as needed */
+    height: 73%;
+    border-radius: 3%;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.8s ease;
+    align-items: center;
+    justify-content: space-between; /* Distributes space evenly between items */
+    padding: 2vh; /* Add padding for a more balanced look */
+    box-sizing: border-box;
+}
+
+.piechart, .trendline, .trendline2 {
+    color: black;
+    background-color: rgb(107, 103, 103);
+    width: 105%; /* Adjust width as needed */
+    height: 38%; /* Adjust height to ensure enough space for each section */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center text vertically */
+    margin-bottom: 1vh; /* Space out elements */
+}
+
+.piechart h3, .trendline h3, .trendline2 h3{
+    margin: 0;
+    color: white;
+}
+
+.stats_words {
+    color: white;
+    font-size: 1.5em;
+    margin: 0 0 2vh 0; /* Margin only on the bottom */
+   
+}
