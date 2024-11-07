@@ -9,7 +9,7 @@ interface Selections {
 }
 
 interface SidebarProps {
-    onSelectionSubmit: (selections: Selections, data: any) => void; // Update type for data as needed
+    onSelectionSubmit: (selections: Selections, data: any) => void; // Update to accept both selections and data
 }
 
 export default function Sidebar({ onSelectionSubmit }: SidebarProps) {
@@ -23,25 +23,9 @@ export default function Sidebar({ onSelectionSubmit }: SidebarProps) {
         setIsCollapsed(!isCollapsed);
     };
 
-    const fetchWFSData = async () => {
-        try {
-            const wfsUrl = `http://66.42.65.87:8080/geoserver/${modelOutput}_2_STATS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${modelOutput}_2_STATS%3A${year}.shp&maxFeatures=50&outputFormat=application%2Fjson`;
-            const wmsUrl = `http://66.42.65.87:8080/geoserver/${modelOutput}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${modelOutput}%3A${year}&bbox=13.875377878611111%2C-26.520063817777775%2C36.4787870575%2C-8.962491589722221&width=768&height=596&srs=EPSG%3A4326&styles=&format=image%2Fpng`;
-
-            const wfsResponse = await fetch(wfsUrl);
-            if (!wfsResponse.ok) throw new Error('Network response was not ok for WFS');
-            const wfsData = await wfsResponse.json();
-
-            return { wfsData, wmsUrl };
-        } catch (error) {
-            console.error('Error fetching WFS or WMS data:', error);
-            return null;
-        }
-    };
-
-    const handleSubmit = async () => {
-        const selections = { country, modelOutput, year, season };
-        const data = await fetchWFSData();
+    const handleSubmit = () => {
+        const selections: Selections = { country, modelOutput, year, season };
+        const data = null; // You can set this to whatever data you need
 
         // Pass selections and fetched data to the parent component
         onSelectionSubmit(selections, data);
@@ -57,11 +41,10 @@ export default function Sidebar({ onSelectionSubmit }: SidebarProps) {
                     <h2>Selections</h2>
                     <label htmlFor="location">Select Country:</label>
                     <select id="location" name="location" value={country} onChange={(e) => setCountry(e.target.value)}>
-                        <option value="Uganda">Uganda</option>
-                        <option value="Kenya">Kenya</option>
-                        <option value="Tanzania">Tanzania</option>
-                        <option value="Malawi">Malawi</option>
-                        <option value="South_sudan">South Sudan</option>
+                        <option value="cuvelai">cuvelai</option>
+                        <option value="limpopo">limpopo</option>
+                        <option value="okavango">okavango</option>
+                        <option value="zambezi">zambezi</option>
                     </select>
 
                     <label htmlFor="modelOutput">Select Model Output:</label>
@@ -85,9 +68,9 @@ export default function Sidebar({ onSelectionSubmit }: SidebarProps) {
 
                     <label htmlFor="season">Select Season:</label>
                     <select id="season" name="season" value={season} onChange={(e) => setSeason(e.target.value)}>
-                        <option value="Season_A">Season_A</option>
-                        <option value="Season_B">Season_B</option>
-                        <option value="Single_Season">Main_Season</option>
+                        <option value="WET">WET</option>
+                        <option value="DRY">DRY</option>
+                        <option value="MAIN">MAIN</option>
                     </select>
                     
                     <button className="submit_request" onClick={handleSubmit}>Submit Request</button>

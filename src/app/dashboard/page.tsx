@@ -1,13 +1,15 @@
-
-
 "use client";
 import Sidebar from "./sidebar";
 import MapProvider from "./map-providers";
 import Statscard from "./statscard";
-import { MapComponent } from "./map";
 import { useState } from "react";
+import dynamic from 'next/dynamic';
+import './leaflet.css';
 
-
+// Dynamically import MapComponent with ssr: false
+const MapComponent = dynamic(() => import('./leaflet'), { 
+  ssr: false
+});
 
 interface Selections {
     country: string;
@@ -51,9 +53,10 @@ export default function Dashboard() {
         <div>
             <MapProvider>
                 <MapComponent selections={mapSelections} data={mapData} />
-            </MapProvider>
+            </MapProvider> 
             <Sidebar onSelectionSubmit={handleSelectionSubmit} />
             <Statscard />
         </div>
     );
 }
+
