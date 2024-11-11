@@ -4,8 +4,10 @@ import { GoogleMap } from "@react-google-maps/api";
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useRef, useState } from 'react';
-
-
+// import { GoogleMap } from "@react-google-maps/api";
+// import { LayerGroup, MapContainer, TileLayer, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+// import { useEffect, useRef, useState } from 'react';
 
 import './map.css';
 import { posix } from "path";
@@ -50,8 +52,9 @@ const defaultMapOptions = {
 
 
 const options = {
-    center: [40.731253, -73.996139] as [number, number], 
-    zoom: 12,
+    center: [34.364602923811276,-0.5757395269629058] as [number, number], 
+   
+    zoom: 5,
   };
 
 const MapComponent: React.FC<MapComponentProps> = ({ selections, data }) => {
@@ -73,23 +76,16 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections, data }) => {
         zoom={defaultMapZoom}
         options={defaultMapOptions}>
       </GoogleMap>
-      
-      {isLeafletLoaded && (
-        <MapContainer
-        center={options.center}
-        zoom={options.zoom}
-        style={{ height: "100%", width: "100%" }}
-      >
-
-        {/* <LayerGroup>
-                    {data.wmsUrl && (
-                    <TileLayer url={data.wmsUrl} {...wmsOptions} />
-                    )}
-        </LayerGroup> */}
-      </MapContainer>
-      )}
     </div>
   );
 };
 
 export { MapComponent };
+
+
+
+
+
+
+
+
