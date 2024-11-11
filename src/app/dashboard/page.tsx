@@ -23,6 +23,11 @@ interface Data {
     wmsUrl: string;
 }
 
+interface StatscardProps {
+    selections: Selections;
+    data: Data;
+}
+
 export default function Dashboard() {
     // Define the initial values
     const defaultSelections: Selections = {
@@ -55,7 +60,8 @@ export default function Dashboard() {
                 <MapComponent selections={mapSelections} data={mapData} />
             </MapProvider> 
             <Sidebar onSelectionSubmit={handleSelectionSubmit} />
-            <Statscard />
+            {/* <Statscard /> */}
+            <Statscard selections={mapSelections} data={mapData}/>
         </div>
     );
 }

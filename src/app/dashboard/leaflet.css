@@ -9,4 +9,14 @@ body {
     bottom: 0;
     width: 100%;
     z-index: 10;
+    color: black;
+}
+
+.leaflet-control-layers-base label {
+  color: #101010; /* This sets the color to tomato (you can change this to any color) */
+  font-weight: bold; /* Optional: makes the text bold */
+}
+
+.leaflet-control-layers-base input:checked + label {
+  color: #09b809; /* Changes the color when the layer is selected (green in this case) */
 }

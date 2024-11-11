@@ -31,6 +31,12 @@ export default function Sidebar({ onSelectionSubmit }: SidebarProps) {
         onSelectionSubmit(selections, data);
     };
 
+    // Conditional logic for available season options
+    const seasonOptions =
+        country === 'cuvelai'
+            ? ['MAIN'] // Only MAIN for cuvelai
+            : ['WET', 'DRY']; // WET and DRY for other countries
+
     return (
         <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
             <button className="toggle-button" onClick={toggleSidebar}>
@@ -41,10 +47,10 @@ export default function Sidebar({ onSelectionSubmit }: SidebarProps) {
                     <h2>Selections</h2>
                     <label htmlFor="location">Select Country:</label>
                     <select id="location" name="location" value={country} onChange={(e) => setCountry(e.target.value)}>
-                        <option value="cuvelai">cuvelai</option>
-                        <option value="limpopo">limpopo</option>
-                        <option value="okavango">okavango</option>
-                        <option value="zambezi">zambezi</option>
+                        <option value="Cuvelai">cuvelai</option>
+                        <option value="Limpopo">limpopo</option>
+                        <option value="Okavango">okavango</option>
+                        <option value="Zambezi">zambezi</option>
                     </select>
 
                     <label htmlFor="modelOutput">Select Model Output:</label>
@@ -66,16 +72,24 @@ export default function Sidebar({ onSelectionSubmit }: SidebarProps) {
                         <option value="2025">2025</option>
                     </select>
 
-                    <label htmlFor="season">Select Season:</label>
-                    <select id="season" name="season" value={season} onChange={(e) => setSeason(e.target.value)}>
-                        <option value="WET">WET</option>
-                        <option value="DRY">DRY</option>
-                        <option value="MAIN">MAIN</option>
-                    </select>
-                    
+                    {/* Conditionally render season dropdown */}
+                    {modelOutput !== 'LULC' && (
+                        <>
+                            <label htmlFor="season">Select Season:</label>
+                            <select id="season" name="season" value={season} onChange={(e) => setSeason(e.target.value)}>
+                                {seasonOptions.map((seasonOption) => (
+                                    <option key={seasonOption} value={seasonOption}>
+                                        {seasonOption}
+                                    </option>
+                                ))}
+                            </select>
+                        </>
+                    )}
+
                     <button className="submit_request" onClick={handleSubmit}>Submit Request</button>
                 </>
             )}
         </div>
     );
 }
+
