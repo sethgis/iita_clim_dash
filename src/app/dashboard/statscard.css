@@ -1,6 +1,6 @@
 
 .statscard {
-    background-color: rgb(139, 144, 145);
+    background-color: rgb(133, 137, 137);
     position: absolute;
     right: 0%; /* Adjust as needed */
     top: 15%; /* Adjust as needed */
@@ -20,19 +20,21 @@
 
 .piechart, .trendline, .trendline2 {
     color: black;
-    background-color: rgb(107, 103, 103);
+    background-color: rgb(247, 245, 245);
     width: 105%; /* Adjust width as needed */
-    height: 38%; /* Adjust height to ensure enough space for each section */
+    height: 40%; /* Adjust height to ensure enough space for each section */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center; /* Center text vertically */
     margin-bottom: 1vh; /* Space out elements */
+    margin-left: 1vh;
+    border-radius: 1vh;
 }
 
 .piechart h3, .trendline h3, .trendline2 h3{
     margin: 0;
-    color: white;
+    color: rgb(13, 13, 13);
 }
 
 .stats_words {

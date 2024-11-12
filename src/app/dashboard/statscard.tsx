@@ -31,7 +31,6 @@ interface StatscardProps {
 export default function Statscard({ selections }: StatscardProps) {
     const [isVisible, setIsVisible] = useState(true);
     const [barData, setBarData] = useState<any>(null); // State for bar graph data
-
     // Effect to log selections prop or perform other side effects
     useEffect(() => {
         console.log("Selections prop in Statscard:", selections);
@@ -47,30 +46,54 @@ export default function Statscard({ selections }: StatscardProps) {
         try {
             const response = await fetch(wfsRequestUrl);
             const geoJsonData = await response.json();
+            console.log("raw geojson data",geoJsonData)
 
-            // Filter the geoJSON data based on country selection and calculate stats
-            // const filteredData = geoJsonData.features.filter((feature: any) => feature.properties.country === selections.country);
-            const filteredData = geoJsonData.features.filter((feature: any) => feature.properties.country === selections.country);
-            console.log("Filtered_stats_data",filteredData)
 
-            // Example: Assume the stats you need are in `property.value` and calculate something (e.g., sum)
-            const stats = filteredData.map((feature: any) => feature.properties.value);
-            const totalStats = stats.reduce((acc: number, val: number) => acc + val, 0);
-            console.log("Filtered stats:", totalStats);
+            const filteredData = geoJsonData.features[0].properties;
+            console.log("One Features:", filteredData);
 
+            const landUseProperties = [
+                "Agricultur", "Forest", "Grassland", "Wetland", "Builtup",
+                "Shrubland", "Bareland", "Water"
+            ];
+
+            const colorMapping: { [key: string]: string } = {
+                "Agricultur": "rgba(34, 139, 34, 0.2)",  // Green
+                "Forest": "rgba(0, 128, 0, 0.2)",       // Dark Green
+                "Grassland": "rgba(154, 205, 50, 0.2)", // Yellow-Green
+                "Wetland": "rgba(0, 191, 255, 0.2)",     // Light Blue
+                "Builtup": "rgba(255, 69, 0, 0.2)",      // Red
+                "Shrubland": "rgba(160, 82, 45, 0.2)",   // Brown
+                "Bareland": "rgba(255, 255, 0, 0.2)",    // Yellow
+                "Water": "rgba(30, 144, 255, 0.2)"       // Dodger Blue
+            };
+    
+            // Filter the properties to include only those from Agricultur onward
+            const chartLabels = landUseProperties.filter(key => key in filteredData);
+            const chartDataValues = chartLabels.map(key => filteredData[key]);
+
+            const chartBackgroundColors = chartLabels.map(label => colorMapping[label] || 'rgba(0, 0, 0, 0.2)');  // Default to black if no color found
+    
+            console.log("Chart Labels:", chartLabels);
+            console.log("Chart Data Values:", chartDataValues);
+    
             // Prepare data for the bar chart
             const chartData = {
-                labels: filteredData.map((feature: any) => feature.properties.name), // e.g., feature names (e.g., regions, years)
+                labels: chartLabels,  // Labels for the land use types
                 datasets: [{
-                    label: 'Stats for ' + selections.country,
-                    data: stats,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    label: `Stats for ${selections.country}`,
+                    data: chartDataValues,
+                    backgroundColor: chartBackgroundColors,
+                    borderColor: chartBackgroundColors.map(color => color.replace('0.2', '1')),
                     borderWidth: 1,
                 }],
             };
-
+    
+            console.log("Chart Data:", chartData);
+    
+            // Assuming you are using a state hook to store the chart data
             setBarData(chartData); // Update the bar graph data
+    
         } catch (error) {
             console.error("Error fetching WFS data:", error);
         }
@@ -94,6 +117,13 @@ export default function Statscard({ selections }: StatscardProps) {
     } else {
         explanation = 'Select a model to view the summary explanation.';
     }
+    
+    // // In JSX, apply inline styles
+    // return (
+    //     <div style={{ marginLeft: '20px', lineHeight: '1.4', fontSize: '14px' }}>
+    //         {explanation}
+    //     </div>
+    // );
 
     return (
         <>
@@ -121,10 +151,10 @@ export default function Statscard({ selections }: StatscardProps) {
             {isVisible && (
                 <div className="statscard">
                     <h2 className='stats_words'>Summary and Statistics</h2> 
-                    <div className="piechart"><h3>{explanation}</h3></div> 
-                    <div className="trendline"><h3>Rainfall Trend Line from 2020</h3></div>
+                    <div className="piechart" ><h3 style={{ marginLeft: '20px', lineHeight: '1.4', fontSize: '14px' }}>{explanation}</h3></div> 
+                    <div className="trendline"><h3 style={{ marginLeft: '20px', lineHeight: '1.4', fontSize: '14px' }}>Rainfall Trend Line from 2020</h3></div>
                     <div className="trendline2">
-                        <h3>Bar Graph from 2020 Analytics</h3>
+                        <h3 style={{ marginLeft: '20px', lineHeight: '1.4', fontSize: '14px' }}>Bar Graph for Analytics</h3>
                         {barData && <Bar data={barData} />}
                     </div>
                 </div>
