@@ -59,14 +59,14 @@ export default function Statscard({ selections }: StatscardProps) {
             ];
 
             const colorMapping: { [key: string]: string } = {
-                "Agricultur": "rgba(34, 139, 34, 0.2)",
-                "Forest": "rgba(0, 128, 0, 0.2)",
-                "Grassland": "rgba(154, 205, 50, 0.2)",
-                "Wetland": "rgba(0, 191, 255, 0.2)",
-                "Builtup": "rgba(255, 69, 0, 0.2)",
-                "Shrubland": "rgba(160, 82, 45, 0.2)",
-                "Bareland": "rgba(255, 255, 0, 0.2)",
-                "Water": "rgba(30, 144, 255, 0.2)"
+                "Agricultur": "rgba(34, 139, 34, 1.0)",
+                "Forest": "rgba(0, 128, 0, 1.0)",
+                "Grassland": "rgba(154, 205, 50, 1.0)",
+                "Wetland": "rgba(0, 191, 255, 1.0)",
+                "Builtup": "rgba(255, 69, 0, 1.0)",
+                "Shrubland": "rgba(160, 82, 45, 1.0)",
+                "Bareland": "rgba(255, 255, 0, 1.0)",
+                "Water": "rgba(30, 144, 255, 1.0)"
             };
 
             const chartLabels = landUseProperties.filter(key => key in filteredData);
@@ -94,7 +94,9 @@ export default function Statscard({ selections }: StatscardProps) {
         if (selections.modelOutput === 'LULC') {
             explanation = 'Land Use and Land Cover (LULC) analysis focuses on monitoring changes in the use and cover of land over time, providing valuable insights for environmental planning and management.';
         } else if (selections.modelOutput === 'NDVI') {
-            explanation = 'Normalized Vegetation Index (NVI) is used to assess the health of vegetation, providing a measure of plant greenness and vitality.';
+            explanation = 'Normalized Vegetation Index (NVI) is used to assess the health of vegetation, providing a measure of plant greenness and vitality.'
+        } else if (selections.modelOutput === 'TC_PPT_ANNUAL') {
+            explanation = 'Climate Hazards Center InfraRed Precipitation with Station data (CHIRPS) is a 30+ year quasi-global rainfall dataset. CHIRPS incorporates 0.05° resolution satellite imagery with in-situ station data to create gridded rainfall time series for trend analysis and seasonal drought monitoring.';
         } else {
             explanation = 'Select a model to view the summary explanation.';
         }
@@ -112,12 +114,6 @@ export default function Statscard({ selections }: StatscardProps) {
     const toggleTrendLine = () => {
         setShowRainfall(!showRainfall);
     };
-
-    // return (
-    //     <div style={{ marginLeft: '20px', lineHeight: '1.4', fontSize: '14px' }}>
-    //         {explanation}
-    //      </div>
-    // );
 
     return (
         <>

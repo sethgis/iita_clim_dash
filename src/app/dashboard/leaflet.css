@@ -17,6 +17,12 @@ body {
   font-weight: bold; /* Optional: makes the text bold */
 }
 
+.leaflet-control-layers label {
+  color: black !important;
+  font-weight: bold; /* Optional: Make the text bold */
+}
+
+
 .leaflet-control-layers-base input:checked + label {
   color: #09b809; /* Changes the color when the layer is selected (green in this case) */
 }
