@@ -132,8 +132,8 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
                     break;
                 case 'LULC':
                     dynamicBounds = [
-                        [-18.086400000000005, 21.9948],
-                        [5.0571, 41.9274],
+                        [-26.520063817777775, 13.875377878611111],
+                        [-8.962491589722221, 36.4787870575],
                     ];
                     break;
                 case 'TC_PPT_ANNUAL':
