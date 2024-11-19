@@ -51,14 +51,19 @@ export default function Sidebar({ onSelectionSubmit }: SidebarProps) {
                         <option value="limpopo">Limpopo</option>
                         <option value="okavango">Okavango</option>
                         <option value="zambezi">Zambezi</option>
+                        <option value="BURUNDI">Burundi</option>
+                        <option value="RWANDA">Rwanda</option>
+                        <option value="KENYA">Kenya</option>
+                        <option value="ZAMBIA">Zambia</option>
+                        <option value="TANZANIA">Tanzania</option>
+                        <option value="MALAWI">Malawi</option>
                     </select>
 
                     <label htmlFor="modelOutput">Select Model Output:</label>
                     <select id="modelOutput" name="modelOutput" value={modelOutput} onChange={(e) => setModelOutput(e.target.value)}>
                         <option value="NDVI">NDVI</option>
                         <option value="LULC">LULC</option>
-                        <option value="SPI">SPI</option>
-                        <option value="SPEI">SPEI</option>
+                        <option value="TC_PPT_ANNUAL">PPT_ANNUAL</option>
                     </select>
 
                     <label htmlFor="year">Select Year:</label>
@@ -73,7 +78,7 @@ export default function Sidebar({ onSelectionSubmit }: SidebarProps) {
                     </select>
 
                     {/* Conditionally render season dropdown */}
-                    {modelOutput !== 'LULC' && (
+                    {modelOutput !== 'LULC' && modelOutput !== 'TC_PPT_ANNUAL' &&(
                         <>
                             <label htmlFor="season">Select Season:</label>
                             <select id="season" name="season" value={season} onChange={(e) => setSeason(e.target.value)}>
