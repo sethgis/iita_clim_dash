@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, WMSTileLayer, LayersControl } from 'react-leaflet';
+import React, { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, LayersControl, ImageOverlay, WMSTileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import './map.css';
-import { CRS } from 'leaflet';
+import { CRS, LatLngBoundsExpression } from 'leaflet';
 
 interface Selections {
     country: string;
@@ -32,31 +32,74 @@ const leafletOptions = {
 };
 
 const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
-    useEffect(() => {
-        console.log("Selections prop:", selections);
-    }, [selections]);
-
-    // let WMS_URL = '';
-    // let product = '';
+    const [wmsImageUrl, setWmsImageUrl] = useState<string | null>(null);
+    const [bounds, setBounds] = useState<LatLngBoundsExpression | null>(null);
 
     const { country, modelOutput, year, season } = selections;
 
     // Set default WMS URL and product
-    let WMS_URL = `http://66.42.65.87:8080/geoserver/${modelOutput}/wms?`;
-    let product = `${modelOutput}:${year}`;
-    let style = ``;
-
-
-    // Adjust WMS URL and product if modelOutput is 'NDVI'
-    if (modelOutput === 'NDVI') {
-        WMS_URL = `http://66.42.65.87:8080/geoserver/LANDSAT_${modelOutput}_${season}/wms?`;
+    let WMS_URL = `http://66.42.65.87:8080/geoserver/${modelOutput}/wms`;
+    let product = '';
+    let style = '';
+    if (modelOutput === 'NDVI') { 
+        WMS_URL = `http://66.42.65.87:8080/geoserver/LANDSAT_${modelOutput}_${season}/wms`;
         product = `LANDSAT_NDVI_${season}:${year}`;
-        console.log("PRODUCT:", product);
-        console.log("WMS URL:", WMS_URL);
     } else if (modelOutput === 'LULC') {
-        console.log("PRODUCT:", product);
-        console.log("WMS URL:", WMS_URL);
+        product = `${modelOutput}:${year}`;
+    } else {
+        console.error(`Unsupported modelOutput: ${modelOutput}`);
     }
+    // let product = `${modelOutput}:${year}`;
+
+    const lowerCaseModelOutput = modelOutput.toLowerCase();
+    if (country === 'limpopo') {
+        style = `limpopo_${lowerCaseModelOutput}`;
+    } else if (country === 'cuvelai') {
+        style = `cuvelai_${lowerCaseModelOutput}`;
+    } else if (country === 'okavango') {
+        style = `okavango_${lowerCaseModelOutput}`;
+    } else if (country === 'zambezi') {
+        style = `zambezi_${lowerCaseModelOutput}`;
+    } else {
+        console.error('Invalid country selection');
+    }
+
+    // Fetch the WMS image
+    useEffect(() => {
+        const fetchWMSImage = async () => {
+            const params = new URLSearchParams({
+                service: 'WMS',
+                request: 'GetMap',
+                styles: style,
+                layers: product,
+                format: 'image/png',
+                transparent: 'true',
+                version: '1.1.0',
+                // bbox: '-180,-90,180,90',
+                bbox: '13.875377878611111,-26.520063817777775,36.4787870575,-8.962491589722221',
+                // Replace with your desired bbox
+                width: '768', // Replace with desired width
+                height: '596', // Replace with desired height
+                srs: 'EPSG:4326', // Replace with desired spatial reference
+            });
+
+            // bounds={[
+            //     [-26.520063817777775, 13.875377878611111], // Southwest corner
+            //     [-8.962491589722221, 36.4787870575],      // Northeast corner
+            // ]}
+
+            const url = `${WMS_URL}?${params.toString()}`;
+            setWmsImageUrl(url);
+
+            // Set bounds for the overlay
+            setBounds([
+                [-26.520063817777775, 13.875377878611111], // Southwest corner
+                [-8.962491589722221, 36.4787870575],   // Northeast corner
+            ]);
+        };
+
+        fetchWMSImage();
+    }, [WMS_URL, product, style]);
 
     return (
         <div className="map-container" style={defaultMapContainerStyle}>
@@ -104,22 +147,15 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
                     </LayersControl.BaseLayer>
 
                     {/* WMS Layer */}
-                    <LayersControl.Overlay checked name="WMS Layer">
-                        <WMSTileLayer
-                            url={WMS_URL}
-                            params={{
-                                service: "WMS",
-                                request: "GetMap",
-                                layers: product,
-                                format: "image/png",
-                                styles: style,
-                                transparent: true,
-                                version: "1.1.0",
-                            }}
-                            opacity={1.0}
-                            crossOrigin="anonymous"
-                        />
-                    </LayersControl.Overlay>
+                    {wmsImageUrl && bounds && (
+                        <LayersControl.Overlay checked name="WMS_Layer">
+                            <ImageOverlay
+                                url={wmsImageUrl}
+                                bounds={bounds}
+                                opacity={1.0}
+                            />
+                        </LayersControl.Overlay>
+                    )}
                 </LayersControl>
             </MapContainer>
         </div>
@@ -127,3 +163,29 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
 };
 
 export default MapComponent;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

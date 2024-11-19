@@ -47,10 +47,10 @@ export default function Sidebar({ onSelectionSubmit }: SidebarProps) {
                     <h2>Selections</h2>
                     <label htmlFor="location">Select Country:</label>
                     <select id="location" name="location" value={country} onChange={(e) => setCountry(e.target.value)}>
-                        <option value="Cuvelai">cuvelai</option>
-                        <option value="Limpopo">limpopo</option>
-                        <option value="Okavango">okavango</option>
-                        <option value="Zambezi">zambezi</option>
+                        <option value="cuvelai">Cuvelai</option>
+                        <option value="limpopo">Limpopo</option>
+                        <option value="okavango">Okavango</option>
+                        <option value="zambezi">Zambezi</option>
                     </select>
 
                     <label htmlFor="modelOutput">Select Model Output:</label>

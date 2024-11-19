@@ -90,6 +90,14 @@ export default function Statscard({ selections }: StatscardProps) {
             console.error("Error fetching WFS data:", error);
         }
     };
+    let explanation = '';
+        if (selections.modelOutput === 'LULC') {
+            explanation = 'Land Use and Land Cover (LULC) analysis focuses on monitoring changes in the use and cover of land over time, providing valuable insights for environmental planning and management.';
+        } else if (selections.modelOutput === 'NDVI') {
+            explanation = 'Normalized Vegetation Index (NVI) is used to assess the health of vegetation, providing a measure of plant greenness and vitality.';
+        } else {
+            explanation = 'Select a model to view the summary explanation.';
+        }
 
     useEffect(() => {
         fetchWFSData();
@@ -159,7 +167,6 @@ export default function Statscard({ selections }: StatscardProps) {
 
                     <div className="trendline2">
                         <h3 style={{ marginLeft: '20px', lineHeight: '1.4', fontSize: '14px' }}>
-                            Bar Graph for Analytics
                         </h3>
                         {barData && <Bar data={barData} />}
                     </div>

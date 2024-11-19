@@ -29,6 +29,7 @@
     justify-content: center; /* Center text vertically */
     margin-bottom: 1vh; /* Space out elements */
     margin-left: 1vh;
+    margin-right:1vh;
     border-radius: 1vh;
 }
 
