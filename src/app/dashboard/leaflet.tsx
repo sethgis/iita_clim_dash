@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, LayersControl, ImageOverlay, WMSTileLayer } from 'react-leaflet';
+
+import React, { useEffect, useState, useRef } from 'react';
+import { MapContainer, TileLayer, LayersControl, ImageOverlay, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import './map.css';
-import { CRS, LatLngBoundsExpression } from 'leaflet';
+import { CRS, LatLngBoundsExpression, LatLngBounds } from 'leaflet';
 
 interface Selections {
     country: string;
@@ -27,8 +28,21 @@ const defaultMapContainerStyle = {
 };
 
 const leafletOptions = {
-    center: [23.36460, 5.9757] as [number, number],
-    zoom: 4,
+    center: [2.5, 30], // Approximate center of East Africa (you can adjust the lat/lng as needed)
+    zoom: 18, // Adjust zoom level as per East Africa zoom level preference
+};
+
+// Custom hook to fit the bounds when they change
+const FitBoundsToSelection = ({ bounds }: { bounds: LatLngBoundsExpression | null }) => {
+    const map = useMap();
+
+    useEffect(() => {
+        if (bounds) {
+            map.fitBounds(bounds); // This will zoom and pan the map to the bounds
+        }
+    }, [bounds, map]);
+
+    return null;
 };
 
 const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
@@ -146,13 +160,13 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
     return (
         <div className="map-container" style={defaultMapContainerStyle}>
             <MapContainer
-                center={leafletOptions.center}
-                zoom={leafletOptions.zoom}
+                center={[2.5, 30]}
+                zoom={15}
                 style={defaultMapContainerStyle}
                 crs={CRS.EPSG3857}
             >
                 <LayersControl position="topright">
-                    <LayersControl.BaseLayer checked name="Streets">
+                    <LayersControl.BaseLayer name="Streets">
                         <TileLayer
                             url="https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=XJN0Iz2XNa6bkwwZTp1F"
                             tileSize={512}
@@ -163,7 +177,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
                         />
                     </LayersControl.BaseLayer>
 
-                    <LayersControl.BaseLayer name="Satellite">
+                    <LayersControl.BaseLayer checked name="Satellite">
                         <TileLayer
                             url="https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=XJN0Iz2XNa6bkwwZTp1F"
                             tileSize={512}
@@ -195,53 +209,14 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
                         </LayersControl.Overlay>
                     )}
                 </LayersControl>
-            </MapContainer>
 
-            {legendUrl && (
-                <div
-                    className="legend-container"
-                    style={{
-                        position: 'absolute',
-                        bottom: '10px',
-                        left: '10px',
-                        background: 'white',
-                        padding: '10px',
-                        borderRadius: '4px',
-                        zIndex: 1000,
-                    }}
-                >
-                    <img src={legendUrl} alt="Legend" />
-                </div>
-            )}
+                {/* Fit the map bounds when bounds change */}
+                {bounds && <FitBoundsToSelection bounds={bounds} />}
+            </MapContainer>
         </div>
     );
 };
 
 export default MapComponent;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
