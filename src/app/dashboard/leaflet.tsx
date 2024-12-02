@@ -109,7 +109,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
     } else if (modelOutput === 'NDVI_Rainfall_Correlation') {
         let years = `${year}`
         product = `Climate:NDVI_Rainfall_Correlation_${year}`;
-        product_legend = `Climate%3ANDVI_Rainfall_Correlation_1983_2005`;
+        product_legend = `Climate:NDVI_1983_2005`;
         
         bbox = '21.9948,-18.086400000000005,41.9274,5.0571';
         

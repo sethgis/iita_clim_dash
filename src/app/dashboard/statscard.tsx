@@ -298,7 +298,7 @@ export default function Statscard({ selections }: StatscardProps) {
                                 y: {
                                     title: {
                                         display: true,
-                                        text: 'Value'
+                                        text: 'Amount(mm)'
                                     },
                                     beginAtZero: true,
                                 }
