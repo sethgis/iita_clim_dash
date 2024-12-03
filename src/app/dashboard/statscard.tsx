@@ -57,138 +57,157 @@ export default function Statscard({ selections }: StatscardProps) {
         console.log("Selections prop in Statscard:", selections);
     }, [selections]);
 
+
     const fetchWFSData = async () => {
         if (!selections.country) return;
 
-        const wfsRequestUrl = `http://66.42.65.87:8080/geoserver/LULC_2_STATS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=LULC_2_STATS%3A2017.shp&maxFeatures=50&outputFormat=application%2Fjson`;
-
+        
+    
+        const wfsRequestUrl = `http://5.252.54.37:8080/geoserver/Climate/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Climate%3A${selections.modelOutput}_${selections.year}_stats.shp&maxFeatures=50&outputFormat=application%2Fjson`;
+        console.log("wfsRequestUrl recreated",wfsRequestUrl)
         try {
             const response = await fetch(wfsRequestUrl);
-            const geoJsonData = await response.json();
-            const filteredData = geoJsonData.features[0].properties;
-
-            const landUseProperties = [
-                "Agricultur", "Forest", "Grassland", "Wetland", "Builtup",
-                "Shrubland", "Bareland", "Water"
-            ];
-
-            const colorMapping: { [key: string]: string } = {
-                "Agricultur": "rgba(34, 139, 34, 1.0)",
-                "Forest": "rgba(0, 128, 0, 1.0)",
-                "Grassland": "rgba(154, 205, 50, 1.0)",
-                "Wetland": "rgba(0, 191, 255, 1.0)",
-                "Builtup": "rgba(255, 69, 0, 1.0)",
-                "Shrubland": "rgba(160, 82, 45, 1.0)",
-                "Bareland": "rgba(255, 255, 0, 1.0)",
-                "Water": "rgba(30, 144, 255, 1.0)"
+            const geoJsonData: {
+                features: { properties: { Low: number; Moderate: number; High: number } }[];
+            } = await response.json();
+    
+            // Define land use properties and color mapping
+            const landUseProperties: ("Low" | "Moderate" | "High")[] = ["Low", "Moderate", "High"];
+            const colorMapping: { [key in "Low" | "Moderate" | "High"]: string } = {
+                High: "#31bd4b",
+                Moderate: "#dbcc3d",
+                Low: "red"
             };
+    
+            // Initialize arrays to store values for each property
+            const chartDataValues: { [key in "Low" | "Moderate" | "High"]: number[] } = {
+                Low: [],
+                Moderate: [],
+                High: []
+            };
+    
+            // Populate data arrays
+            geoJsonData.features.forEach((feature) => {
+                chartDataValues.Low.push(feature.properties.Low);
+                chartDataValues.Moderate.push(feature.properties.Moderate);
+                chartDataValues.High.push(feature.properties.High);
+            });
 
-            const chartLabels = landUseProperties.filter(key => key in filteredData);
-            const chartDataValues = chartLabels.map(key => filteredData[key]);
-            const chartBackgroundColors = chartLabels.map(label => colorMapping[label] || 'rgba(0, 0, 0, 0.2)');
-
+            const countryNames = ["Burundi", "Malawi", "Rwanda", "Tanzania", "Zambia"];
+    
+            // Create chart labels and datasets
+            // const chartLabels = geoJsonData.features.map((_, index) => `Feature ${index + 1}`);
+            const chartLabels = countryNames.slice(0, geoJsonData.features.length);
+            const datasets = landUseProperties.map(property => ({
+                label: property,
+                data: chartDataValues[property],
+                backgroundColor: colorMapping[property],
+                borderColor: colorMapping[property].replace('1.0', '1'),
+                borderWidth: 1,
+            }));
+    
             const chartData2 = {
                 labels: chartLabels,
-                datasets: [{
-                    label: `Stats for ${selections.country}`,
-                    data: chartDataValues,
-                    backgroundColor: chartBackgroundColors,
-                    borderColor: chartBackgroundColors.map(color => color.replace('0.2', '1')),
-                    borderWidth: 1,
-                }],
+                datasets: datasets
             };
-
+    
             setBarData(chartData2);
-
+    
         } catch (error) {
             console.error("Error fetching WFS data:", error);
         }
     };
 
 
+
     useEffect(() => {
-        const fetchTrendData = async (country: string, year: string) => {
-            let data;
-            switch (country) {
-                case 'MALAWI':
-                    data = MALAWI;
-                    break;
-                case 'KENYA':
-                    data = KENYA;
-                    break;
-                case 'TANZANIA':
-                    data = TANZANIA;
-                    break;
-                case 'RWANDA':
-                    data = RWANDA;
-                    break;
-                case 'BURUNDI':
-                    data = BURUNDI;
-                    break;
-                case 'ZAMBIA':
-                    data = ZAMBIA;
-                    break;
-                default:
-                    data = KENYA; // Default to KENYA if the country is not found
-            }
+    const fetchTrendData = async (country, year) => {
+        let data;
+        switch (country) {
+            case 'MALAWI':
+                data = MALAWI;
+                break;
+            case 'KENYA':
+                data = KENYA;
+                break;
+            case 'TANZANIA':
+                data = TANZANIA;
+                break;
+            case 'RWANDA':
+                data = RWANDA;
+                break;
+            case 'BURUNDI':
+                data = BURUNDI;
+                break;
+            case 'ZAMBIA':
+                data = ZAMBIA;
+                break;
+            default:
+                data = KENYA; // Default to KENYA if the country is not found
+        }
 
-            let result;
-            if (year === "1983_2005") {
-                result = {
-                    Precipitation: data['Precipitation_2005'],
-                    Temperature: data['Temperature_2005']
-                };
-            } else if (year === "2005_2022") {
-                result = {
-                    Precipitation: data['Precipitation_2022'],
-                    Temperature: data['Temperature_2022']
-                };
-            } else {
-                return ;
-            }
+        let result;
+        if (year === "1983_2005") {
+            result = {
+                Precipitation: data['Precipitation_2005'],
+                Temperature: data['Temperature_2005']
+            };
+        } else if (year === "2005_2022") {
+            result = {
+                Precipitation: data['Precipitation_2005'],
+                Temperature: data['Temperature_2005']
+            };
+        } else {
+            return null; // Return null for invalid year
+        }
 
-            return result;
-        };
-
-        const selectedCountry = selections.country 
-        const selectedYear = selections.year 
-
-        fetchTrendData(selectedCountry, selectedYear)
-            .then(data => {
-                if (data) {
-                    const labels = Object.keys(data.Precipitation); // Assuming months are the same for both data sets
-                    const precipitationData = Object.values(data.Precipitation);
-                    const temperatureData = Object.values(data.Temperature);
-
-                    setChartData({
-                        labels,
-                        datasets: [
-                            {
-                                label: 'Precipitation',
-                                data: precipitationData,
-                                borderColor: 'blue',
-                                backgroundColor: 'rgba(0, 0, 255, 0.2)',
-                                fill: true,
-                            },
-                            {
-                                label: 'Temperature',
-                                data: temperatureData,
-                                borderColor: 'red',
-                                backgroundColor: 'rgba(255, 0, 0, 0.2)',
-                                fill: true,
-                            }
-                        ]
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    }, [selections]);
-
-    const toggleTrendLine = () => {
-        setShowRainfall(!showRainfall);
+        return result;
     };
+
+    const selectedCountry = selections.country;
+    const selectedYear = selections.year;
+
+    // Fetch data and update state
+    fetchTrendData(selectedCountry, selectedYear)
+        .then((data) => {
+            if (data) {
+                const labels = Object.keys(data.Precipitation); // Assuming months are the same for both data sets
+                const precipitationData = Object.values(data.Precipitation);
+                const temperatureData = Object.values(data.Temperature);
+
+                // Update chart data
+                setChartData({
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Precipitation',
+                            data: precipitationData,
+                            borderColor: 'blue',
+                            backgroundColor: 'rgba(0, 0, 255, 0.2)',
+                            fill: true,
+                        },
+                        {
+                            label: 'Temperature',
+                            data: temperatureData,
+                            borderColor: 'red',
+                            backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                            fill: true,
+                        }
+                    ]
+                });
+            } else {
+                console.error('Invalid data for the selected year');
+            }
+        })
+        .catch((error) => {
+            console.error('Error fetching data:', error);
+        });
+}, [selections]); // Dependencies to trigger useEffect on changes in selections
+
+const toggleTrendLine = () => {
+    setShowRainfall(!showRainfall);
+};
+
 
     let explanation = '';
         if (selections.modelOutput === 'NDVI_Rainfall_Correlation') {
@@ -212,6 +231,11 @@ export default function Statscard({ selections }: StatscardProps) {
     const toggleButtonVisibility = () => {
         setIsButtonVisible((prev) => !prev);
     };
+
+    const months = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ]
 
     return (
         <>
@@ -250,7 +274,7 @@ export default function Statscard({ selections }: StatscardProps) {
 
             <div className="trendline">
                 <h3 style={{ marginLeft: '20px', lineHeight: '1.4', fontSize: '14px' }}>
-                    {showRainfall ? 'Rainfall Trend Line' : 'Temperature Trend Line'}
+                    {showRainfall ?'':''}
                 </h3>
 
                 <button
@@ -269,9 +293,15 @@ export default function Statscard({ selections }: StatscardProps) {
 
                 {chartData && (
                     <Line
+                        // data={{
+                        //     labels: chartData.labels,
+                        //     datasets: showRainfall ? [chartData.datasets[0]] : [chartData.datasets[1]],
+                        // }}
                         data={{
-                            labels: chartData.labels,
-                            datasets: showRainfall ? [chartData.datasets[0]] : [chartData.datasets[1]],
+                            labels: months,  // Use the months array as labels
+                            datasets: showRainfall 
+                                ? [chartData.datasets[0]] 
+                                : [chartData.datasets[1]],
                         }}
                         options={{
                             responsive: true,

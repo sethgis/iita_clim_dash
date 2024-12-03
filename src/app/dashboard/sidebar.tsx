@@ -56,7 +56,7 @@ export default function Sidebar({ onSelectionSubmit }: SidebarProps) {
                         <option value="RWANDA">Rwanda</option>
                         <option value="ZAMBIA">Zambia</option>
                         <option value="TANZANIA">Tanzania</option>
-                        <option value="KENYA">Kenya</option>
+                        {/* <option value="KENYA">Kenya</option> */}
                         </select>
 
                     <label htmlFor="modelOutput">Select Model Output:</label>
@@ -72,6 +72,9 @@ export default function Sidebar({ onSelectionSubmit }: SidebarProps) {
                     <option value="NDVI_Rainfall_Correlation">Rainfall Corr</option>
                     <option value="NDVI">NDVI</option>
                     <option value="Precipitation">Precipitation</option>
+                    <option value="TC_PPT_ANNUAL">TC_PPT_ANNUAL</option>
+                    <option value="NDVI_Trend">NDVI_Trend</option>
+                    {/* NDVI_Trend */}
                     </select>
 
                     <label htmlFor="year">Select Year:</label>

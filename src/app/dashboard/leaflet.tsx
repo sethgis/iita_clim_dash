@@ -178,8 +178,49 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
           style = `Precipitation_Rwanda`
         }
 
+    }else if (modelOutput === 'TC_PPT_ANNUAL') {
+        product = `Climate:TC_PPT_ANNUAL`;
+        product_legend = "Climate:NDVI_1983_2005";
+        bbox = '21.9948,-18.086400000000005,41.9274,5.0571';
+        if (country === 'MALAWI') {
+            style = `Precipitation_Malawi`;
+        } else if (country === 'ZAMBIA'){
+          style = `Precipitation_Zambia`;
+        }else if (country === 'TANZANIA'){
+          style = `Precipitation_Tanzania`;
+        }else if (country === 'UGANDA'){
+          style = `Precipitation_Uganda`;
+        }else if (country === 'KENYA'){
+          style = `Precipitation_Kenya`;
+        }else if (country === 'BURUNDI'){
+          style = `Precipitation_Burundi`
+        }else if (country === 'RWANDA'){
+          style = `Precipitation_Rwanda`
+        }
+
+    }else if (modelOutput === 'NDVI_Trend') {
+        product = `Climate:NDVI_Trend`;
+        product_legend = "Climate:NDVI_1983_2005";
+        bbox = '21.9948,-18.086400000000005,41.9274,5.0571';
+        if (country === 'MALAWI') {
+            style = `NDVI_Trend_Malawi`;
+        } else if (country === 'ZAMBIA'){
+          style = `NDVI_Trend_Zambia`;
+        }else if (country === 'TANZANIA'){
+          style = `NDVI_Trend_Tanzania`;
+        }else if (country === 'UGANDA'){
+          style = `NDVI_Trend_Uganda`;
+        }else if (country === 'KENYA'){
+          style = `NDVI_Trend_Kenya`;
+        }else if (country === 'BURUNDI'){
+          style = `NDVI_Trend_Burundi`
+        }else if (country === 'RWANDA'){
+          style = `NDVI_Trend_Rwanda`
+        }
+
     }
 
+    // NDVI_Trend
     // Fetch the WMS image and legend, and dynamically set bounds
     useEffect(() => {
         const fetchWMSImageAndLegend = async () => {
@@ -236,6 +277,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
                 case 'NDVI_Rainfall_Correlation':
                 case 'Precipitation':
                 case 'Precipitation_Long_Term_Mean':
+                case 'NDVI_Trend':
                     dynamicBounds = [
                         [-18.086400000000005, 21.9948],
                         [5.0571, 41.9274],
