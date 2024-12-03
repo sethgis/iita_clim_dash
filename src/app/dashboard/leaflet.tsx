@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 
+import L from 'leaflet';
 // Access-Control-Allow-origin: *
 
 import {
@@ -54,7 +55,6 @@ const FitBoundsToSelection = ({ bounds }: { bounds: LatLngBoundsExpression | nul
     return null;
 };
 
-// Custom hook to set a default zoom level for a specific layer
 const SetZoomForLayer = ({ zoom }: { zoom: number }) => {
     const map = useMap();
 
@@ -78,6 +78,11 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
     let product_legend = '';
     let style = '';
     let bbox = '';
+
+
+    let WMS_BOUND = `http://5.252.54.37:8080/geoserver/Climate/wms`;
+    let COUNTRY_BOUND = '';
+    
 
     if (modelOutput === 'NDVI') {
         WMS_URL = `http://5.252.54.37:8080/geoserver/Climate/wms`;
@@ -345,11 +350,22 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
                             <ImageOverlay
                                 url={wmsImageUrl}
                                 bounds={bounds}
-                                opacity={1.0}
+                                opacity={0.8}
                                 crossOrigin={true}
                             />
                         </LayersControl.Overlay>
                     )}
+
+                     {wmsImageUrl && bounds && (
+                            <LayersControl.Overlay checked name="Boundary">
+                                <ImageOverlay
+                                    url="http://5.252.54.37:8080/geoserver/Climate/wms?service=WMS&version=1.1.0&request=GetMap&layers=Climate%3AAOI&bbox=21.980037939399438%2C-18.079176286756194%"
+                                    bounds={bounds}
+                                    opacity={0.8}
+                                    crossOrigin={true}
+                                />
+                            </LayersControl.Overlay>
+                        )}
 
                     {legendUrl && (
                         <div className="legend-container" style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000 }}>

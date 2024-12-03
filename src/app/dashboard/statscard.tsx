@@ -57,14 +57,21 @@ export default function Statscard({ selections }: StatscardProps) {
         console.log("Selections prop in Statscard:", selections);
     }, [selections]);
 
-
     const fetchWFSData = async () => {
         if (!selections.country) return;
-
-        
     
-        const wfsRequestUrl = `http://5.252.54.37:8080/geoserver/Climate/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Climate%3A${selections.modelOutput}_${selections.year}_stats.shp&maxFeatures=50&outputFormat=application%2Fjson`;
-        console.log("wfsRequestUrl recreated",wfsRequestUrl)
+        // Define the base URL
+        let wfsRequestUrl = 'http://5.252.54.37:8080/geoserver/Climate/ows?service=WFS&version=1.0.0&request=GetFeature&maxFeatures=50&outputFormat=application%2Fjson';
+    
+        // Modify the URL based on modelOutput
+        if (selections.modelOutput === 'TCP_ANNUAL' || selections.modelOutput === 'NDVI_trend') {
+            wfsRequestUrl = `http://5.252.54.37:8080/geoserver/Climate/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Climate%3ANDVI_Trend_stats.shp&maxFeatures=50&outputFormat=application%2Fjson`;
+        } else {
+            wfsRequestUrl = `http://5.252.54.37:8080/geoserver/Climate/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Climate%3A${selections.modelOutput}_${selections.year}_stats.shp&maxFeatures=50&outputFormat=application%2Fjson`;
+        }
+    
+        console.log("wfsRequestUrl recreated", wfsRequestUrl);
+    
         try {
             const response = await fetch(wfsRequestUrl);
             const geoJsonData: {
@@ -92,11 +99,10 @@ export default function Statscard({ selections }: StatscardProps) {
                 chartDataValues.Moderate.push(feature.properties.Moderate);
                 chartDataValues.High.push(feature.properties.High);
             });
-
+    
             const countryNames = ["Burundi", "Malawi", "Rwanda", "Tanzania", "Zambia"];
     
             // Create chart labels and datasets
-            // const chartLabels = geoJsonData.features.map((_, index) => `Feature ${index + 1}`);
             const chartLabels = countryNames.slice(0, geoJsonData.features.length);
             const datasets = landUseProperties.map(property => ({
                 label: property,
@@ -117,9 +123,7 @@ export default function Statscard({ selections }: StatscardProps) {
             console.error("Error fetching WFS data:", error);
         }
     };
-
-
-
+    
     useEffect(() => {
     const fetchTrendData = async (country, year) => {
         let data;
@@ -216,6 +220,10 @@ const toggleTrendLine = () => {
             explanation = 'Normalized Vegetation Index (NDVI) is used to assess the health of vegetation, providing a measure of plant greenness and vitality.'
         } else if (selections.modelOutput === 'Precipitation') {
             explanation = 'This measure provides important information about the quantity of moisture that has been deposited on the land surface, which is critical for various environmental, agricultural, and hydrological processes.';
+        } else if (selections.modelOutput === 'TC_PPT_ANNUAL') {
+            explanation = 'The annual rainfall mean refers to the average amount of rainfall received over the course of a year in a specific area. It is typically measured in millimeters (mm) or inches and is calculated by adding the total amount of rainfall for each month (or each precipitation event) within a year and dividing that sum by 12 (for monthly data) or by the number of data points collected.';
+        } else if (selections.modelOutput === 'NDVI_Trend') {
+            explanation = 'Long-term NDVI (Normalized Difference Vegetation Index) trends provide valuable insights into vegetation health and changes in land cover over time. NDVI is a measure of vegetation greenness, which can indicate plant health, productivity, and biomass density.';
     
         } else {
             explanation = 'This is a climate based dashboard, showcases calimate datasets, please select a climate product of interest to get more information';
