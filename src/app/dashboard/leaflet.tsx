@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 import L from 'leaflet';
 // Access-Control-Allow-origin: *
@@ -74,14 +75,11 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
 
     // Set default WMS URL and product
     let WMS_URL = `http://5.252.54.37:8080/geoserver/Climate/wms`;
-    let product = '';
-    let product_legend = '';
-    let style = '';
+    let product = 'Climate:NDVI_1983_2005';
+    let product_legend = 'Climate:NDVI_1983_2005';
+    let style = 'Climate:NDVI_1983_2005';
     let bbox = '';
 
-
-    let WMS_BOUND = `http://5.252.54.37:8080/geoserver/Climate/wms`;
-    let COUNTRY_BOUND = '';
     
 
     if (modelOutput === 'NDVI') {
@@ -369,6 +367,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
 
                     {legendUrl && (
                         <div className="legend-container" style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000 }}>
+                           
                             <img src={legendUrl} alt="Legend" style={{ width: '100px', height: 'auto' }} />
                         </div>
                     )}

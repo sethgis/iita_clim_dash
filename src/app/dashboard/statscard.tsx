@@ -6,6 +6,9 @@ import React, { useState, useEffect } from 'react';
 import './statscard.css';
 import { Line } from 'react-chartjs-2';
 import { Bar } from 'react-chartjs-2';
+import { TooltipItem } from 'chart.js';
+// import TooltipItem
+
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -48,7 +51,7 @@ interface StatscardProps {
 }
 
 export default function Statscard({ selections }: StatscardProps) {
-    const [isVisible, setIsVisible] = useState(true);
+    const [isVisible, setIsVisible] = useState(false);
     const [barData, setBarData] = useState<any>(null);
     const [showRainfall, setShowRainfall] = useState(true); // Toggle between rainfall and temperature data
     const [chartData, setChartData] = useState<any>(null); // State to hold chart data
@@ -125,7 +128,7 @@ export default function Statscard({ selections }: StatscardProps) {
     };
     
     useEffect(() => {
-    const fetchTrendData = async (country, year) => {
+    const fetchTrendData = async (country: string, year: string) => {
         let data;
         switch (country) {
             case 'MALAWI':
@@ -226,11 +229,12 @@ const toggleTrendLine = () => {
             explanation = 'Long-term NDVI (Normalized Difference Vegetation Index) trends provide valuable insights into vegetation health and changes in land cover over time. NDVI is a measure of vegetation greenness, which can indicate plant health, productivity, and biomass density.';
     
         } else {
-            explanation = 'This is a climate based dashboard, showcases calimate datasets, please select a climate product of interest to get more information';
+            explanation = 'This is a climate based dashboard, showcases climate datasets, please select a climate product of interest to get more insights, the insights are also inclusive of the charts tha will be shown here';
         }
     useEffect(() => {
         fetchWFSData();
     }, [selections]);
+    
 
     const toggleVisibility = () => {
         setIsVisible((prev) => !prev);
@@ -266,7 +270,7 @@ const toggleTrendLine = () => {
                         zIndex: 11,
                     }}
                 >
-                    {isVisible ? 'Hide' : 'Show'}
+                    {isVisible ? 'Hide' : 'Show Stats'}
                 </button>
             )}
 
@@ -321,7 +325,7 @@ const toggleTrendLine = () => {
                                 tooltip: {
                                     callbacks: {
                                         label: function (tooltipItem) {
-                                            return `${tooltipItem.dataset.label}: ${tooltipItem.raw.toFixed(2)}`;
+                                            return `${tooltipItem.dataset.label}: ${(tooltipItem.raw as number).toFixed(2)}`;
                                         }
                                     }
                                 }
