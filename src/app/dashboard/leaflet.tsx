@@ -16,11 +16,13 @@ import {
 import 'leaflet/dist/leaflet.css';
 import './map.css';
 import { CRS, LatLngBoundsExpression } from 'leaflet';
+import { count } from 'console';
 
 interface Selections {
     country: string;
     modelOutput: string;
     year: string;
+    month:string;
     season: string;
 }
 
@@ -71,7 +73,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
     const [legendUrl, setLegendUrl] = useState<string | null>(null); // State for legend URL
     const [bounds, setBounds] = useState<LatLngBoundsExpression | null>(null);
 
-    const { country, modelOutput, year, season } = selections; 
+    const { country, modelOutput, year, month, season } = selections; 
 
     // Set default WMS URL and product
     let WMS_URL = `http://5.252.54.37:8080/geoserver/Climate/wms`;
@@ -109,29 +111,48 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
      
 
 
-    } else if (modelOutput === 'NDVI_Rainfall_Correlation') {
-        let years = `${year}`
-        product = `Climate:NDVI_Rainfall_Correlation_${year}`;
+    } 
+    if (modelOutput === 'NDVI') {
+        WMS_URL = `http://5.252.54.37:8080/geoserver/Climate/wms`;
         product_legend = `Climate:NDVI_1983_2005`;
+        console.log("NDVI LEGEND",  product_legend)
         
+        product = `Climate:${modelOutput}_${year}`;
+        console.log('NDVI_PRODUCT', product)
+        // style = `${modelOutput}_${country}`;
         bbox = '21.9948,-18.086400000000005,41.9274,5.0571';
+        if (country === 'MALAWI') {
+            style = `NDVI_Malawi`;
+        } else if (country === 'ZAMBIA'){
+          style = `NDVI_Zambia`;
+        }else if (country === 'TANZANIA'){
+          style = `NDVI_Tanzania`;
+        }else if (country === 'UGANDA'){
+          style = `NDVI_Uganda`;
+        }else if (country === 'KENYA'){
+          style = `NDVI_Kenya`;
+        }else if (country === 'BURUNDI'){
+          style = `NDVI_Burundi`
+        }else if (country === 'RWANDA'){
+          style = `NDVI_Rwanda`
+        }
+     
+
+
+    }else if (modelOutput === 'FARM_BOUNDARY') {
+        let years = `${year}`
+        WMS_URL = `http://5.252.54.37:8080/geoserver/Climate/wms`;
+        product = `Climate%3Asevalugu_bounds_ghana`;
+        product_legend = `POLYGON`;
+        bbox = '-0.85, 9.6, -0.83, 9.6';
+        // {
+        //   "west": -0.8598664182549669,
+        //   "south": 9.653566995254991,
+        //   "east": -0.8360767995388301,
+        //   "north": 9.677858061101176
+        // }
+        // bbox = '3.0,4.73, 1.1918, 11.1733';
         
-          
-          if (country === 'MALAWI') {
-              style = `NDVI_Rainfall_Correlation_Malawi`;
-          } else if (country === 'ZAMBIA'){
-            style = `NDVI_Rainfall_Correlation_Zambia`;
-          }else if (country === 'TANZANIA'){
-            style = `NDVI_Rainfall_Correlation_Tanzania`;
-          }else if (country === 'UGANDA'){
-            style = `NDVI_Rainfall_Correlation_Uganda`;
-          }else if (country === 'KENYA'){
-            style = `NDVI_Rainfall_Correlation_Kenya`;
-          }else if (country === 'BURUNDI'){
-            style = `NDVI_Rainfall_Correlation_Kenya`
-          }else if (country === 'RWANDA'){
-            style = `NDVI_Rainfall_Correlation_Kenya`
-          }
        
     } else if (modelOutput === 'Precipitation') {
         let years = `${year}`
@@ -221,7 +242,107 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
           style = `NDVI_Trend_Rwanda`
         }
 
+    } else if (
+      modelOutput === 'Yield_Advantage_DK8053' ||
+      modelOutput === 'Yield_Advantage_PAN53' ||
+      modelOutput === 'Yield_Advantage_SC719' ||
+      modelOutput === 'Yield_Advantage_ZM309'
+  ) {
+      product = `Climate:${modelOutput}_${year}`;
+      product_legend = "Climate:NDVI_1983_2005";
+      bbox = '21.9948,-18.086400000000005,41.9274,5.0571';
+  
+      switch (country) {
+          case 'MALAWI':
+              style = 'Yield_Advantage_Malawi';
+              break;
+          case 'ZAMBIA':
+              style = 'Yield_Advantage_Zambia';
+              break;
+          case 'ZIMBABWE':
+                style = 'Yield_Advantage_Zimbabwe';
+                break;
+          case 'TANZANIA':
+              style = 'Yield_Advantage_Tanzania';
+              break;
+          case 'UGANDA':
+              style = 'Yield_Advantage_Uganda';
+              break;
+          case 'KENYA':
+              style = 'Yield_Advantage_Kenya';
+              break;
+          case 'BURUNDI':
+              style = 'Yield_Advantage_Burundi';
+              break;
+          case 'RWANDA':
+              style = 'Yield_Advantage_Rwanda';
+              break;
+          default:
+              style = 'Yield_Advantage'; // Fallback in case no country matches
+              break;
+      }
+  } else if (
+    modelOutput === 'Cumulative_wet_days_Laos' ||
+    modelOutput === 'Cumulative_dry_days_Laos' ||
+    modelOutput === 'Rainfall_Cessation_Laos' ||
+    modelOutput === 'Rainfall_Onset_Laos' ||
+    modelOutput === 'Length_Growing_Period_Laos' ||
+    modelOutput === 'Rainfall_Total_Mean_Laos' ||
+    modelOutput === 'r20_Laos') 
+    {
+    product = `Climate:${modelOutput}`;
+    product_legend = "Climate:NDVI_1983_2005";
+    // bbox = '7.679066, 101.644584, 24.992666, 110.96463'
+    bbox =  '98.999993862, 12.999997709, 108.000006138, 22.999998476'
+    // bbox = '7.679066, 101.644584, 24.992666, 110.96463';
+
+    switch (country) {
+        case 'Laos':
+            style = `Cummulative_wet_days_Laos`;
+            break;
+        default:
+            style = 'NDVI_Trend_Default'; // Fallback in case no country matches
+            break;
     }
+  }
+  else if (
+    modelOutput === 'TC_PPT_MAX' ||
+    modelOutput === 'TC_PPT_MIN' ||
+    modelOutput === 'TC_PPT') 
+    {
+    product = `Climate:${modelOutput}_${month}`;
+    product_legend = "Climate:NDVI_1983_2005";
+    bbox = '21.9948,-18.086400000000005,41.9274,5.0571';
+
+    switch (country) {
+      case 'MALAWI':
+          style = 'TC_PPT_MAX_Malawi';
+          break;
+      case 'ZAMBIA':
+          style = 'TC_PPT_MAX_Zambia';
+          break;
+      case 'TANZANIA':
+          style = 'TC_PPT_MAX_Tanzania';
+          break;
+      case 'UGANDA':
+          style = 'TC_PPT_MAX_Uganda';
+          break;
+      case 'KENYA':
+          style = 'TC_PPT_MAX_Kenya';
+          break;
+      case 'BURUNDI':
+          style = 'TC_PPT_MAX_Burundi';
+          break;
+      case 'RWANDA':
+          style = 'TC_PPT_MAX_Rwanda';
+          break;
+      default:
+          style = 'TC_PPT_MAX_Uganda'; // Fallback in case no country matches
+          break;
+  }
+  }
+  
+
 
     // NDVI_Trend
     // Fetch the WMS image and legend, and dynamically set bounds
@@ -249,18 +370,29 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
                 HEIGHT: '20',
                 LAYER: product_legend,
             });
+        
+          let wmsImageUrl: string;
+          if (country === 'Laos') {
+            wmsImageUrl = `${WMS_URL}?${mapParams.toString()}`;
+            // wmsImageUrl = `${WMS_URL}?service=WMS&version=1.1.0&request=GetMap&layers=Climate%3A${modelOutput}&bbox=98.999993862%2C12.999997709%2C108.000006138%2C22.999998476&width=691&height=768&srs=EPSG%3A4326&styles=Cummulative_wet_days_Laos&format=image%2Fpng`;
+            console.log("CREATED_WMS_URL_IN_LEAFLET", wmsImageUrl)
 
-            const wmsImageUrl = `${WMS_URL}?${mapParams.toString()}`;
-            console.log("CREATED_WMS_URL",wmsImageUrl)
-            fetch(wmsImageUrl)
-                .then(response => {
-                    if (response.status === 200) {
-                    console.log("WMS URL is valid, layer exists.");
-                    } else {
-                    console.error("The layer does not exist.");
-                    alert("The layer does not exist.");
-                    }
-                })
+        } else {
+            wmsImageUrl = `${WMS_URL}?${mapParams.toString()}`;
+            console.log("CREATED_WMS_URL_IN_LEAFLET", wmsImageUrl);
+        }
+          // const wmsImageUrl = `${WMS_URL}?${mapParams.toString()}`;
+          // console.log("CREATED_WMS_URL_IN_LEAFLET", wmsImageUrl);
+            
+          fetch(wmsImageUrl)
+              .then(response => {
+                  if (response.status === 200) {
+                  console.log("WMS URL is valid, layer exists.");
+                  } else {
+                  console.error("The layer does not exist.");
+                  alert("The layer does not exist.");
+                  }
+              })
             const legendGraphicUrl = `${WMS_URL}?${legendParams.toString()}`;
             console.log("CREATED_legend graphic",legendGraphicUrl)
 
@@ -285,7 +417,34 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
                         [-18.086400000000005, 21.9948],
                         [5.0571, 41.9274],
                     ];
-                    break;
+                break;
+                case 'FARM_BOUNDARY_2':
+                      dynamicBounds = [
+                          [-18.086400000000005, 17.9948],
+                          [5.0571, 41.9274],
+                      ];
+                      break;
+
+                case 'Cumulative_wet_days_Laos':
+                case 'Cumulative_dry_days_Laos':
+                case 'Rainfall_Cessation_Laos':
+                case 'Rainfall_Onset_Laos':
+                case 'Rainfall_Total_Mean_Laos':
+                case 'Length_Growing_Period_Laos':
+                case 'r20_Laos':
+                    dynamicBounds = [
+                      // [7.679066, 101.644584], [24.992666, 110.96463]
+
+                      [12.999997709,98.999993862],[22.999998476, 108.000006138]
+  
+                    ]; break;
+                case 'FARM_BOUNDARY':
+                    dynamicBounds = [
+                      // [7.679066, 101.644584], [24.992666, 110.96463]
+
+                      [4.2,-3.2],[11.3, 1.0]
+                      
+                    ]; break;
                 default:
                     console.error(`Unsupported modelOutput for bounds: ${modelOutput}`);
                     dynamicBounds = [
@@ -353,17 +512,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ selections }) => {
                             />
                         </LayersControl.Overlay>
                     )}
-
-                     {wmsImageUrl && bounds && (
-                            <LayersControl.Overlay checked name="Boundary">
-                                <ImageOverlay
-                                    url="http://5.252.54.37:8080/geoserver/Climate/wms?service=WMS&version=1.1.0&request=GetMap&layers=Climate%3AAOI&bbox=21.980037939399438%2C-18.079176286756194%"
-                                    bounds={bounds}
-                                    opacity={0.8}
-                                    crossOrigin={true}
-                                />
-                            </LayersControl.Overlay>
-                        )}
 
                     {legendUrl && (
                         <div className="legend-container" style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000 }}>

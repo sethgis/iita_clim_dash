@@ -2,14 +2,16 @@ version: '3.9'
 
 services:
   nextjs-app:
+    image: iita_climate:1.2 # Specify your image name and tag
     build: .
     ports:
-      - "8080:3000"
+      - "8085:3000"
     environment:
       NODE_ENV: production
     volumes:
       - .:/app
       - /app/node_modules
     command: npm start
+
 
 

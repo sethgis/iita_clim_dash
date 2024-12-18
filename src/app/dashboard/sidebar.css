@@ -44,27 +44,44 @@ select {
 }
 
 .submit_request {
-    background-color: rgb(107, 103, 103);
+    background-color: rgb(112, 118, 134);
     color: white;
     padding: 10px;
-    margin: 20px auto 0; /* Center the button horizontally */
+    margin: 20px auto 0;
     width: 50%;
     border: none;
     border-radius: 15px;
     cursor: pointer;
     font-size: 14px;
     display: flex;
-    justify-content: center; /* Center text within the button */
+    justify-content: center;
     transition: background-color 0.3s ease;
 }
 
+.submit_request:active {
+    background-color: rgb(127, 145, 133); /* Change color on click */
+}
+
+.shake {
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+
 
 .submit_request:hover {
-    background-color: rgb(120, 120, 120);
+    background-color: rgb(61, 85, 183);
 }
 
 .toggle-button {
-    background-color:rgb(102, 97, 97);
+    background-color:rgb(117, 118, 118);
     color:white;
     width: 60px;
     border: none;
@@ -79,5 +96,5 @@ select {
 
 
 .toggle-button:hover {
-    color: lightgray;
+    color: rgb(24, 185, 83);
 }
